@@ -94,9 +94,9 @@ function App() {
         <td style={{flex:1,borderLeft:"1px solid #666"}}>N</td>
         <td style={{flex:1,borderLeft:"1px solid #666"}}>D</td>
       </div>
-      <ul style={{listStyle:"none"}}>
+      <ul style={{listStyle:"none",padding:0}}>
         {
-          inForce.map(w => <li key={w.code} style={{display:"inline-block"}}><img src={`/${w.code}.webp`} style={{width:256}} /></li>)
+          inForce.map(w => <li key={w.code} style={{display:"inline-block"}}><img src={`${import.meta.env.BASE_URL}${w.code}.webp`} style={{width:256}} /></li>)
         }
       </ul>
     </>
