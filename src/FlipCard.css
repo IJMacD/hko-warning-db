@@ -1,0 +1,26 @@
+.FlipCard-Wrap {
+    perspective: 1400px;
+    perspective-origin: 0 50%;
+}
+
+.FlipCard--animated {
+    /* transition: transform 2s; */
+    transform-origin: 0px 225px;
+    backface-visibility: hidden;
+    animation: flip-down 2s;
+
+    transform-style: preserve-3d;
+}
+
+.FlipCard--animated .FlipCard-Top {
+    display: none;
+}
+
+@keyframes flip-down {
+    0% {
+        transform: rotate3d(1, 0, 0, 180deg);
+    }
+    100% {
+        transform: none;
+    }
+}
