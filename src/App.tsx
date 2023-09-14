@@ -4,6 +4,7 @@ import { useWarningsDB } from './useWarningsDB';
 import { FlipCard } from './FlipCard';
 import { RowObject } from 'csvdb';
 import cards from './cards.json';
+import { mapLiveToHisorical } from './mapLiveToHisorical';
 
 const ONE_HOUR = 60 * 60 * 1000;
 const EIGHT_HOURS = 8 * ONE_HOUR;
@@ -12,6 +13,8 @@ function App() {
   const [ now, setNow ] = useState(() => Date.now());
   const warningsDB = useWarningsDB();
   const [ isPlaying, setIsPlaying ] = useState(false);
+  const [ isLive, setIsLive ] = useState(false);
+  const [ liveInForce, setLiveInForce ] = useState([] as RowObject[]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -21,6 +24,24 @@ function App() {
       return () => clearInterval(id);
     }
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (isLive) {
+      function update() {
+        fetch("https://www.i-learner.edu.hk/weather/api/v2/warnsum")
+          .then(r => r.json())
+          .then(d => {
+            const warnings = d.InForce.map(mapLiveToHisorical)
+            setLiveInForce(warnings);
+          });
+      }
+
+      update();
+
+      const id = setInterval(() => update(), 60 * 1000);
+      return () => clearInterval(id);
+    }
+  }, [isLive])
 
   const inForce = warningsDB ?
     [
@@ -36,12 +57,22 @@ function App() {
   const previewFlip = false;
   const previewAllFlip = false;
 
+  if (isLive) {
+    return (
+      <>
+        <button onClick={() => setIsLive(false)}>Historical</button>
+        <WarningIconList inForce={liveInForce} />
+      </>
+    );
+  }
+
   if (previewAllFlip) {
     const selectedIndex = highestCard ? cards.indexOf(highestCard.code) : 0;
     const sortedCards = [...cards.slice(selectedIndex + 1), ...cards.slice(0, selectedIndex + 1) ];
 
     return (
       <>
+        <button onClick={() => setIsLive(true)}>Live</button>
         <Header now={now} setNow={setNow} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
         <div className="FlipCard-Wrap" style={{position:"relative",height:450,overflow:"hidden"}}>
           <FlipCard image={""} style={{position:"absolute"}} />
@@ -57,6 +88,7 @@ function App() {
   if (previewFlip) {
     return (
       <>
+        <button onClick={() => setIsLive(true)}>Live</button>
         <Header now={now} setNow={setNow} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
         <FlipCard image={highestCard?getImageURL(highestCard):null} />
         <WarningIconList inForce={inForce} size={64} />
@@ -66,6 +98,7 @@ function App() {
 
   return (
     <>
+      <button onClick={() => setIsLive(true)}>Live</button>
       <Header now={now} setNow={setNow} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
       <WarningIconList inForce={inForce} />
     </>
