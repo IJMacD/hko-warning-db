@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 TMP_DB="tmp-$RANDOM.csv"
 
