@@ -127,7 +127,7 @@ function getImageURL(card: RowObject): string {
 function WarningIconList ({ inForce, size = 256 }: WarningIconListProps) {
   return (
     <ul style={{ listStyle: "none", padding: 0 }}>
-      {inForce.map(w => <li key={w.code} style={{ display: "inline-block" }}><img src={getImageURL(w)} style={{ width: size }} /></li>)}
+      {inForce.map(w => <li key={w.code} style={{ display: "inline-block", margin: "2em", background: "white" }}><img src={getImageURL(w)} style={{ width: size, display: "block" }} /></li>)}
     </ul>
   );
 }
